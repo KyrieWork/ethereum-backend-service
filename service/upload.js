@@ -1,38 +1,38 @@
-const fs = require('fs');
-const path = require('path');
-const moment = require('moment');
-const config = require('../config');
-const crypto = require('crypto');
-const { temporary } = config.get('base');// 临时目录
-const uploadPath = '\\upload';// 本地上传目录
+const fs = require('fs')
+const path = require('path')
+const moment = require('moment')
+const config = require('../config')
+const crypto = require('crypto')
+const { temporary } = config.get('base') // 临时目录
+const uploadPath = '\\upload' // 本地上传目录
 
-const UploadDao = require('../dao/common/UploadDao');
-const uploadDao = new UploadDao();
+const UploadDao = require('../dao/common/UploadDao')
+const uploadDao = new UploadDao()
 
-const cosConfig = config.get('cos');// 临时目录
-const { accessKeyId, secretAccessKey, region, endpoint, bucket, apiVersion, catalogue } = cosConfig;
+const cosConfig = config.get('cos') // 临时目录
+const { accessKeyId, secretAccessKey, region, endpoint, bucket, apiVersion, catalogue } = cosConfig
 
-const AWS = require('aws-sdk');
+const AWS = require('aws-sdk')
 AWS.config.update({
   accessKeyId,
   secretAccessKey,
   region,
   endpoint,
-});
-const s3 = new AWS.S3({ params: { Bucket: bucket }, apiVersion }); // s3接口
+})
+const s3 = new AWS.S3({ params: { Bucket: bucket }, apiVersion }) // s3接口
 
 /**
  * 获取cos文件
  * @param data
  */
 async function getCosFile(data) {
-  const catalogue = data.onlineCatalogue;
-  const { onlineName } = data;
+  const catalogue = data.onlineCatalogue
+  const { onlineName } = data
   const params = {
     Key: `${catalogue}/${onlineName}`,
     Bucket: data.bucket,
-  };
-  return await s3.getObject(params).promise();
+  }
+  return await s3.getObject(params).promise()
 }
 
 /**
@@ -42,28 +42,25 @@ async function getCosFile(data) {
  * @returns {Promise<{error: [], resData: []}>}
  */
 async function uploadCos(files, userId) {
-  const datas = [];// 入库数据
-  const resData = [];
-  const error = [];
+  const datas = [] // 入库数据
+  const resData = []
+  const error = []
   // 文件上传cos
   const putObject = async (file) => {
-    const paths = file.path;
-    const { name } = file;
-    const suffix = path.extname(name);
-    let id = `${moment().utcOffset(8)
-      .format('YYYYMMDDHHmmss')}${Math.round(Math.random() * 99999)}`;
-    const onlineName = `${moment().utcOffset(8)
-      .format('YYYY-MM-DD')}/${id}${suffix}`;
-    const data = fs.readFileSync(paths);
+    const paths = file.path
+    const { name } = file
+    const suffix = path.extname(name)
+    let id = `${moment().utcOffset(8).format('YYYYMMDDHHmmss')}${Math.round(Math.random() * 99999)}`
+    const onlineName = `${moment().utcOffset(8).format('YYYY-MM-DD')}/${id}${suffix}`
+    const data = fs.readFileSync(paths)
 
     const params = {
       Key: `${catalogue}/${onlineName}`,
       Body: data,
-    };
+    }
 
-    const s3Res = await s3.putObject(params).promise();
-    id = crypto.createHash('md5').update(id)
-      .digest('hex');
+    const s3Res = await s3.putObject(params).promise()
+    id = crypto.createHash('md5').update(id).digest('hex')
     if (s3Res.ETag) {
       // 成功的
       datas.push({
@@ -75,18 +72,18 @@ async function uploadCos(files, userId) {
         userId,
         bucket,
         identification: s3Res.ETag,
-      });
-      resData.push({ fid: id, name, suffix });
+      })
+      resData.push({ fid: id, name, suffix })
     } else {
-      error.push({ name });
+      error.push({ name })
     }
-  };
-  await Promise.all(files.map(i => putObject(i)));
+  }
+  await Promise.all(files.map((i) => putObject(i)))
   // 文件上传cos
   // 信息入库
-  uploadDao.insertRows(datas);
+  uploadDao.insertRows(datas)
   // 信息入库
-  return { resData, error };
+  return { resData, error }
 }
 
 /**
@@ -96,18 +93,18 @@ async function uploadCos(files, userId) {
  */
 async function upload(files) {
   try {
-    const filePath = mkDirs();
+    const filePath = mkDirs()
     const pipe = async (file) => {
-      const reader = fs.createReadStream(file.path);
+      const reader = fs.createReadStream(file.path)
       // 创建可写流
-      const upStream = fs.createWriteStream(`${filePath}${file.name}`);
+      const upStream = fs.createWriteStream(`${filePath}${file.name}`)
       // 可读流通过管道写入可写流
-      reader.pipe(upStream);
-    };
-    await Promise.all(files.map(i => pipe(i)));
-    return { status: true };
+      reader.pipe(upStream)
+    }
+    await Promise.all(files.map((i) => pipe(i)))
+    return { status: true }
   } catch (e) {
-    return { status: false, error: e };
+    return { status: false, error: e }
   }
 }
 
@@ -117,18 +114,18 @@ async function upload(files) {
  * @returns {string}
  */
 function mkDirs(type = 1) {
-  const dirPath = getCatalogue(type);
-  let projectPath = path.join(process.cwd());
-  const tempDirArray = dirPath.split('\\');
+  const dirPath = getCatalogue(type)
+  let projectPath = path.join(process.cwd())
+  const tempDirArray = dirPath.split('\\')
   tempDirArray.forEach((i) => {
     if (i) {
-      projectPath = `${projectPath}\\${i}`;
+      projectPath = `${projectPath}\\${i}`
       if (!fs.existsSync(projectPath)) {
-        fs.mkdirSync(projectPath);
+        fs.mkdirSync(projectPath)
       }
     }
-  });
-  return `${projectPath}\\`;
+  })
+  return `${projectPath}\\`
 }
 
 /**
@@ -137,19 +134,17 @@ function mkDirs(type = 1) {
  * @returns {string}
  */
 function getCatalogue(type = 1) {
-  let path = `${temporary}`;
+  let path = `${temporary}`
   if (type === 1) {
-    path += `${uploadPath}\\${moment().utcOffset(8)
-      .format('YYYY-MM-DD')}\\`;
+    path += `${uploadPath}\\${moment().utcOffset(8).format('YYYY-MM-DD')}\\`
   } else {
-    path += `${uploadPath}\\uploads\\`;
+    path += `${uploadPath}\\uploads\\`
   }
-  return path;
+  return path
 }
-
 
 module.exports = {
   upload,
   uploadCos,
   getCosFile,
-};
+}

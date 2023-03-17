@@ -1,4 +1,3 @@
-
 /**
  * 名字加星
  * @param name
@@ -6,18 +5,18 @@
  */
 function formatName(name) {
   if (name) {
-    let str;
+    let str
     if (name.length === 2) {
-      str = `${name.substr(0, 1)}*`;
+      str = `${name.substr(0, 1)}*`
     } else if (name.length > 2) {
-      const char = '*'.repeat(name.length - 2);
-      str = name.substr(0, 1) + char + name.substr(-1, 1);
+      const char = '*'.repeat(name.length - 2)
+      str = name.substr(0, 1) + char + name.substr(-1, 1)
     } else {
-      str = '';
+      str = ''
     }
-    return str;
+    return str
   }
-  return '';
+  return ''
 }
 
 /**
@@ -27,10 +26,10 @@ function formatName(name) {
  */
 function formatMobile(mobile) {
   if (null !== mobile && mobile !== undefined && mobile.length === 11) {
-    const pat = /(\d{3})\d*(\d{4})/;
-    return mobile.replace(pat, '$1****$2');
+    const pat = /(\d{3})\d*(\d{4})/
+    return mobile.replace(pat, '$1****$2')
   }
-  return '';
+  return ''
 }
 
 /**
@@ -39,17 +38,17 @@ function formatMobile(mobile) {
  * @returns {string}
  */
 function formatCertificateNo(no) {
-  const len = no.length;
+  const len = no.length
   if (null !== no && no !== undefined && len >= 11) {
-    const char = '*'.repeat(no.length - 9);
-    const pat = /(\d{5})\d*(\d{4})/;
-    return no.replace(pat, `$1${char}$2`);
+    const char = '*'.repeat(no.length - 9)
+    const pat = /(\d{5})\d*(\d{4})/
+    return no.replace(pat, `$1${char}$2`)
   }
-  return '';
+  return ''
 }
 
 module.exports = {
   formatName,
   formatMobile,
   formatCertificateNo,
-};
+}

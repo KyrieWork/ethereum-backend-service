@@ -1,3 +1,3 @@
-const route = require('koa-router')();
+const route = require('koa-router')()
 
-module.exports = route;
+module.exports = route

@@ -4,11 +4,11 @@ class TestController {
     try {
       console.log('111')
       const data = {}
-      ctx.customJson(data);
+      ctx.customJson(data)
     } catch (e) {
-      ctx.error(e, { message: '解析失败.' });
+      ctx.error(e, { message: '解析失败.' })
     }
   }
 }
 
-module.exports = new TestController();
+module.exports = new TestController()

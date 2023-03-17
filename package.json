@@ -1,0 +1,45 @@
+{
+  "name": "gwyj-platform-server",
+  "version": "0.0.1",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "pm2:start": "cross-env NODE_ENV=test pm2 start app.js"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.996.0",
+    "axios": "^0.24.0",
+    "base64-js": "^1.5.1",
+    "cross-env": "^7.0.3",
+    "crypto-js": "^4.1.1",
+    "deepmerge": "^4.2.2",
+    "install": "^0.13.0",
+    "joi": "^17.4.2",
+    "knex": "^0.95.1",
+    "koa": "^2.13.0",
+    "koa-body": "^4.2.0",
+    "koa-redis": "^4.0.1",
+    "koa-router": "^9.0.1",
+    "koa-session": "^6.2.0",
+    "koa-x-request-id": "^2.0.0",
+    "moment": "^2.29.1",
+    "mysql": "^2.18.1",
+    "node-uuid": "^1.4.8",
+    "node-xlsx": "^0.17.2",
+    "pm2": "^5.1.2",
+    "redis": "^3.1.2",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6",
+    "save": "^2.4.0",
+    "shortid": "^2.2.16",
+    "socket.io": "^4.3.1",
+    "underscore": "^1.12.0",
+    "xlsx": "^0.18.0",
+    "xml2js": "^0.4.23"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.32.0"
+  }
+}

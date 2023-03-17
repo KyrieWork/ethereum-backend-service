@@ -8,7 +8,7 @@ const { API_PREFIX } = require('../constants')
  * demo: demo
 
  */
-const routes = ['demo']
+const routes = ['demo', 'offchain', 'chain']
 
 routes.forEach((item) => {
   const files = glob.sync(`./routes/${item}/*.js`)

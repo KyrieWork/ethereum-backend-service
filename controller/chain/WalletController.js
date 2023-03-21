@@ -25,6 +25,19 @@ class WalletController {
       ctx.error(e, { message: '解析失败.' })
     }
   }
+  // 使用私钥发送 ETH
+  async sendEth(ctx) {
+    try {
+      const req = ctx.request.body
+      const res = await wallet.sendEthFromPrivateKey(req.privateKey, req.to, req.amount)
+      ctx.customJson({
+        transactionHash: res.transactionHash,
+        blockNumber: res.blockNumber,
+      })
+    } catch (e) {
+      ctx.error(e, { message: '解析失败.' })
+    }
+  }
 }
 
 module.exports = new WalletController()

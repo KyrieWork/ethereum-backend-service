@@ -11,23 +11,27 @@ const getEthBalance = async (account) => {
 
 // 使用 私钥 发送 ETH
 const sendEthFromPrivateKey = async (privateKey, to, amount) => {
-  const provider = newProvider()
-  const wallet = new ethers.Wallet(privateKey)
-  const activeWallet = wallet.connect(provider)
-  const nonce = await activeWallet.getTransactionCount('pending')
-  const txParams = {
-    nonce: nonce,
-    to: to,
-    value: toEth(amount),
-    chainId: currentChainId(),
+  try {
+    const provider = newProvider()
+    const wallet = new ethers.Wallet(privateKey)
+    const activeWallet = wallet.connect(provider)
+    const nonce = await activeWallet.getTransactionCount('pending')
+    const txParams = {
+      nonce: nonce,
+      to: to,
+      value: toEth(amount),
+      chainId: currentChainId(),
+    }
+    // const estimateGas = await activeWallet.estimateGas(txParams)
+    const tx = await activeWallet.sendTransaction({
+      ...txParams,
+      // gasLimit: estimateGas,
+    })
+    const txRes = await tx.wait()
+    return txRes
+  } catch (error) {
+    console.log('error', error)
   }
-  // const estimateGas = await activeWallet.estimateGas(txParams)
-  const tx = await activeWallet.sendTransaction({
-    ...txParams,
-    // gasLimit: estimateGas,
-  })
-  const txRes = await tx.wait()
-  return txRes
 }
 
 // 创建助记词

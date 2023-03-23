@@ -1,6 +1,7 @@
 const { IERC20 } = require('../../constants/abi')
 const { toEth, fromEth, callContract, sendContract } = require('./common')
 
+// 获取 Token 余额
 const getTokenBalance = async (token, account) => {
   return fromEth(await callContract(IERC20, token, 'balanceOf', [account]))
 }

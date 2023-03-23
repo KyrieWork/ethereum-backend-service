@@ -1,2 +1,3 @@
 const IERC20 = require('./IERC20.json')
-module.exports = { IERC20 }
+const IMulticall = require('./Multicall.json')
+module.exports = { IERC20, IMulticall }

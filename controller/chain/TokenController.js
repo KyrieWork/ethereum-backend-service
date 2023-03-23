@@ -1,4 +1,4 @@
-const { token } = require('../../utils/chain')
+const { token, multicall } = require('../../utils/chain')
 
 class TokenController {
   // 获取 Token 余额
@@ -44,6 +44,18 @@ class TokenController {
       ctx.customJson({
         transactionHash: res.transactionHash,
         blockNumber: res.blockNumber,
+      })
+    } catch (e) {
+      ctx.error(e, { message: '解析失败.' })
+    }
+  }
+  // 批量获取 Token 余额
+  async multicallUSDT(ctx) {
+    try {
+      const req = ctx.query
+      const res = await multicall.multicallUSDT()
+      ctx.customJson({
+        res: res,
       })
     } catch (e) {
       ctx.error(e, { message: '解析失败.' })
